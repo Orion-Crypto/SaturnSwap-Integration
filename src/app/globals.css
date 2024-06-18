@@ -1,0 +1,182 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body,
+#__next {
+    @apply bg-space-950;
+    @apply overflow-x-hidden;
+}
+
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    /* background: #f1f1f1; */
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #0369a1;
+    border-radius: 6px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #0369a1;
+}
+
+/* For Firefox */
+body {
+    scrollbar-width: thin;
+    scrollbar-color: #0369a1;
+}
+
+.main-tooltip-arrow {
+    background-color: #030326;
+    border-right: 2px solid #0369a1;
+    border-bottom: 2px solid #0369a1;
+    opacity: 1 !important;
+}
+
+.main-tooltip {
+    border: 2px solid #0369a1;
+}
+
+@layer base {
+    input[type='number']::-webkit-inner-spin-button,
+    input[type='number']::-webkit-outer-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    /*[No-Scrollbar]*/
+
+    /* Chrome, Safari and Opera */
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
+
+    .show-scrollbar::-webkit-scrollbar {
+        display: block;
+    }
+
+    .show-scrollbar {
+        -ms-overflow-style: auto; /* IE and Edge */
+        scrollbar-width: auto; /* Firefox */
+    }
+
+    /* Custom Scrollbar Styles */
+
+    /* Sky 500 */
+    .scrollbar-sky-500::-webkit-scrollbar {
+        width: 12px; /* Width of the scrollbar */
+    }
+
+    .scrollbar-sky-500::-webkit-scrollbar-track {
+        /* background: #f1f1f1; */ /* Color of the scrollbar track */
+    }
+
+    .scrollbar-sky-500::-webkit-scrollbar-thumb {
+        background: #15a2de; /* Your specified color */
+        border-radius: 6px; /* Optional: to make the scrollbar thumb round */
+    }
+
+    .scrollbar-sky-500::-webkit-scrollbar-thumb:hover {
+        /*background: #555; */ /* Color when hovering over the scrollbar thumb */
+        background: #0d94ce; /* Your specified color */
+        /* background: #0ea5e9; */
+        border-radius: 6px; /* Optional: to make the scrollbar thumb round */
+    }
+
+    /* Sky 700 */
+    .scrollbar-sky-700-sm::-webkit-scrollbar {
+        width: 6px; /* Width of the scrollbar */
+        height: 6px;
+    }
+
+    .scrollbar-sky-700-sm::-webkit-scrollbar-track {
+        /* background: #f1f1f1; */ /* Color of the scrollbar track */
+    }
+
+    .scrollbar-sky-700-sm::-webkit-scrollbar-thumb {
+        background: #0369a1; /* Your specified color */
+        border-radius: 6px; /* Optional: to make the scrollbar thumb round */
+    }
+
+    .scrollbar-sky-700-sm::-webkit-scrollbar-thumb:hover {
+        /*background: #555; */ /* Color when hovering over the scrollbar thumb */
+    }
+
+    .scrollbar-sky-700-md::-webkit-scrollbar {
+        width: 10px; /* Width of the scrollbar */
+    }
+
+    .scrollbar-sky-700-md::-webkit-scrollbar-track {
+        /* background: #f1f1f1; */ /* Color of the scrollbar track */
+    }
+
+    .scrollbar-sky-700-md::-webkit-scrollbar-thumb {
+        background: #0369a1; /* Your specified color */
+        border-radius: 6px; /* Optional: to make the scrollbar thumb round */
+    }
+
+    .scrollbar-sky-700-md::-webkit-scrollbar-thumb:hover {
+        /*background: #555; */ /* Color when hovering over the scrollbar thumb */
+    }
+
+    .scrollbar-sky-700-lg::-webkit-scrollbar {
+        width: 14px; /* Width of the scrollbar */
+    }
+
+    .scrollbar-sky-700-lg::-webkit-scrollbar-track {
+        /* background: #f1f1f1; */ /* Color of the scrollbar track */
+    }
+
+    .scrollbar-sky-700-lg::-webkit-scrollbar-thumb {
+        background: #0369a1; /* Your specified color */
+        border-radius: 6px; /* Optional: to make the scrollbar thumb round */
+    }
+
+    .scrollbar-sky-700-lg::-webkit-scrollbar-thumb:hover {
+        /*background: #555; */ /* Color when hovering over the scrollbar thumb */
+    }
+
+    .bg-image-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: linear-gradient(rgba(0, 0, 0, 0.33), rgba(0, 0, 0, 0.45)), url('/images/backgrounds/SpaceBlobsBrown.png');
+        background-size: cover;
+        background-color: rgba(255, 255, 255, 0.5) !important;
+        z-index: -1;
+    }
+
+    .transparent-bg {
+        --tw-bg-opacity: 0 !important;
+        background-color: rgba(255, 255, 255, 0) !important;
+    }
+
+    @font-face {
+        font-family: 'a Autobus Omnibus';
+        src:
+            url('../../public/fonts/aAutobusOmnibus.eot'),
+            url('../../public/fonts/aAutobusOmnibus.woff2') format('woff2'),
+            url('../../public/fonts/aAutobusOmnibus.woff') format('woff'),
+            url('../../public/fonts/aAutobusOmnibus.ttf') format('truetype');
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+    }
+}
