@@ -40,7 +40,7 @@ const SwapPage = () => {
         );
     return (
         <>
-            <PageBackground showBackgroundImage={showBackgroundImage} toggleAnimation={toggleAnimation} isNike={isNike} />
+            {/* <PageBackground showBackgroundImage={showBackgroundImage} toggleAnimation={toggleAnimation} isNike={isNike} /> */}
             <div className={clsx(' flex min-h-screen flex-col', 'transition-all duration-300')}>
                 <>
                     <SubNavbar
@@ -53,12 +53,24 @@ const SwapPage = () => {
                         isNike={isNike}
                     />
                 </>
-                <div className="flex h-full w-full justify-center">
-                    <div
-                        onClick={() => console.log('test')}
-                        className="z-50 mt-48 flex cursor-pointer select-none items-center justify-center rounded-xl bg-blue-500 p-4 text-xl font-bold text-white transition-all duration-300 hover:bg-blue-600"
-                    >
-                        Buy 100 ₳ Of Nike
+                <div className="flex h-full w-full flex-col items-center justify-center gap-24">
+                    <div className="flex w-full flex-col items-center gap-4">
+                        <div className="flex w-full items-center justify-center text-3xl font-bold text-sky-300">Simple Tx Builder</div>
+                        <div
+                            onClick={() => console.log('test simple')}
+                            className="z-50 flex max-w-64 cursor-pointer select-none items-center justify-center rounded-xl bg-blue-500 p-4 text-xl font-bold text-white transition-all duration-300 hover:bg-blue-600"
+                        >
+                            Buy 100 ₳ Of Nike
+                        </div>
+                    </div>
+                    <div className="flex w-full flex-col items-center gap-4">
+                        <div className="flex w-full items-center justify-center text-3xl font-bold text-sky-300">Advanced Tx Builder</div>
+                        <div
+                            onClick={() => console.log('test advanced')}
+                            className="z-50 flex max-w-64 cursor-pointer select-none items-center justify-center rounded-xl bg-blue-500 p-4 text-xl font-bold text-white transition-all duration-300 hover:bg-blue-600"
+                        >
+                            Buy 100 ₳ Of Nike
+                        </div>
                     </div>
                 </div>
             </div>

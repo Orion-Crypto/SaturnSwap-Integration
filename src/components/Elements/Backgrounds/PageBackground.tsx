@@ -1,12 +1,11 @@
-import { BackgroundSpaceBlobsBrown } from '@/utils/css/background';
 import clsx from 'clsx';
 
-export const PageBackground = ({ showBackgroundImage, toggleAnimation }: any) => {
+export const PageBackground = ({ showBackgroundImage, toggleAnimation, isNike = false }: any) => {
     return (
         <>
             <div
                 className={clsx(
-                    BackgroundSpaceBlobsBrown, //'bg-space-blobs-brown absolute inset-0 bg-cover',
+                    isNike ? 'bg-nike-swap-2 absolute inset-0 bg-cover' : 'bg-space-blobs-black absolute inset-0 bg-cover',
                     toggleAnimation
                         ? showBackgroundImage
                             ? 'animate-fade-in opacity-100'
