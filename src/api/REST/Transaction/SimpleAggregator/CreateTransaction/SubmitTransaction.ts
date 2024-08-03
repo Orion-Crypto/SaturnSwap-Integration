@@ -12,9 +12,7 @@ export const SubmitSimpleTransactionAPI = async (input: SubmitSimpleTransactionI
             'Content-Type': 'application/json',
         },
     });
-    console.log(response);
 
     const data: SubmitSimpleTransactionPayloadDTO = await response.json();
-    console.log(data);
     return data;
 };
