@@ -33,7 +33,6 @@ export const SimpleOrder = async (
             version: 1,
         },
     ];
-    console.log('marketOrderComponents', marketOrderComponents);
 
     const result = await SimpleComposableOrderV1Transaction({ marketOrderComponents: marketOrderComponents });
     TransactionInfoTab(result);
