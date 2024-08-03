@@ -1,11 +1,7 @@
 import { BottomOrderBook } from '@/components/PageComponents/Swap/OrderBookElements/BottomOrderBook';
 import { RightOrderBook } from '@/components/PageComponents/Swap/OrderBookElements/RightOrderBook';
-import { useGetShowActivityFeed } from '@/hooks/Component/activity-feed.hook';
-import { BASE_POOL_UTXO_KEY, ORDER_BOOK_POOL_UTXO_KEY } from '@/hooks/Models/poolUtxo.hook';
-import { queryClient } from '@/hooks/default';
+import { formatCommaValue } from '@/utils/number';
 import clsx from 'clsx';
-import { useEffect } from 'react';
-
 export const SwapOrderBook = ({
     pool,
     tokenProjectOne,
@@ -15,27 +11,13 @@ export const SwapOrderBook = ({
     isTokenSelected,
     isEnabled,
     utxoOrderBookData = null, // Optionally allow showing utxoOrderBookData
+    isNike = false,
+    isParty = false,
 }: any) => {
-    const pageSize = 30;
-    const orderBookData = {
-        buyPageSize: pageSize,
-        sellPageSize: pageSize,
-    };
-
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            queryClient.invalidateQueries({ queryKey: [BASE_POOL_UTXO_KEY] });
-            queryClient.invalidateQueries({ queryKey: [ORDER_BOOK_POOL_UTXO_KEY] });
-        }, 20000);
-        return () => clearInterval(intervalId);
-    }, []);
-    const { data: showActivityFeed } = useGetShowActivityFeed();
-
     const correctedAddress = address ? address : 'addr'; // Required for the orderbook Utxo query
     return (
         <>
             <RightOrderBook
-                orderBookData={orderBookData}
                 pool={pool}
                 tokenProjectOne={tokenProjectOne}
                 tokenProjectTwo={tokenProjectTwo}
@@ -43,10 +25,10 @@ export const SwapOrderBook = ({
                 swapType={swapType}
                 isTokenSelected={isTokenSelected}
                 isEnabled={isEnabled}
-                isActivityFeedEnabled={showActivityFeed}
+                isNike={isNike}
+                isParty={isParty}
             />
             <BottomOrderBook
-                orderBookData={orderBookData}
                 pool={pool}
                 tokenProjectOne={tokenProjectOne}
                 tokenProjectTwo={tokenProjectTwo}
@@ -54,7 +36,8 @@ export const SwapOrderBook = ({
                 swapType={swapType}
                 isTokenSelected={isTokenSelected}
                 isEnabled={isEnabled}
-                isActivityFeedEnabled={showActivityFeed}
+                isNike={isNike}
+                isParty={isParty}
             />
         </>
     );
@@ -65,8 +48,10 @@ export const BuyOrder = ({ utxo, tokenProjectBuy }: any) => {
     if (price.length > 12) {
         price = price.slice(0, 12);
     }
-    const tokenAmount = utxo?.token_amount_buy ? (utxo.token_amount_buy / Math.pow(10, tokenProjectBuy.decimals)).toFixed(4) : 0;
-    const adaAmount = utxo?.token_amount_sell ? (utxo.token_amount_sell / Math.pow(10, 6)).toFixed(3) : 0;
+    const tokenAmount = utxo?.token_amount_buy ? utxo.token_amount_buy / Math.pow(10, tokenProjectBuy.decimals) : 0;
+    const tokenAmountString = formatCommaValue(tokenAmount, 3, 3);
+    const adaAmount = utxo?.token_amount_sell ? utxo.token_amount_sell / Math.pow(10, 6) : 0;
+    const adaAmountString = formatCommaValue(adaAmount, 3, 3);
 
     let linePadding = 'px-1';
     if (price.length > 6) {
@@ -87,23 +72,29 @@ export const BuyOrder = ({ utxo, tokenProjectBuy }: any) => {
                 <div className={clsx('flex grow items-center justify-center', linePadding)}>
                     {showLine && <div className="h-[1px] w-full rounded-full bg-green-700"></div>}
                 </div>
-                <div className="flex w-16 justify-center">{tokenAmount}</div>
+                <div className="flex w-16 justify-center">{tokenAmountString}</div>
                 <div className={clsx('flex grow items-center justify-center', linePadding)}>
                     {showLine && <div className="h-[1px] w-full rounded-full bg-green-700"></div>}
                 </div>
-                <div className="flex w-12 justify-end">{adaAmount}</div>
+                <div className="flex w-12 justify-end">{adaAmountString}</div>
             </div>
         </>
     );
 };
 
 export const SellOrder = ({ utxo, tokenProjectSell }: any) => {
+    const isIncompleteLiftoffProject = !!tokenProjectSell?.liftoff_project && !tokenProjectSell?.liftoff_project?.is_successful;
+    const bondingCurvePrice = 0.0000369;
+    const isAboveBoundingPrice = utxo?.price >= bondingCurvePrice;
+
     let price = utxo?.price.toFixed(tokenProjectSell?.precision || 4);
     if (price.length > 12) {
         price = price.slice(0, 12);
     }
-    const tokenAmount = utxo?.token_amount_sell ? (utxo.token_amount_sell / Math.pow(10, tokenProjectSell.decimals)).toFixed(4) : 0;
-    const adaAmount = utxo?.token_amount_buy ? (utxo.token_amount_buy / Math.pow(10, 6)).toFixed(3) : 0;
+    const tokenAmount = utxo?.token_amount_sell ? utxo.token_amount_sell / Math.pow(10, tokenProjectSell.decimals) : 0;
+    const tokenAmountString = formatCommaValue(tokenAmount, 3, 3);
+    const adaAmount = utxo?.token_amount_buy ? utxo.token_amount_buy / Math.pow(10, 6) : 0;
+    const adaAmountString = formatCommaValue(adaAmount, 3, 3);
 
     let linePadding = 'px-1';
     if (price.length > 6) {
@@ -117,18 +108,20 @@ export const SellOrder = ({ utxo, tokenProjectSell }: any) => {
         showLine = false;
     }
 
+    const textColor = isIncompleteLiftoffProject && isAboveBoundingPrice ? 'text-yellow-400' : 'text-red-500';
+    const bgColor = isIncompleteLiftoffProject && isAboveBoundingPrice ? 'bg-yellow-400' : 'bg-red-500';
     return (
         <>
             <div className="flex w-full text-2xs">
-                <div className="flex w-12 whitespace-nowrap text-red-500">₳ {price}</div>
+                <div className={clsx('flex w-12 whitespace-nowrap', textColor)}>₳ {price}</div>
                 <div className={clsx('flex grow items-center justify-center', linePadding)}>
-                    {showLine && <div className="h-[1px] w-full rounded-full bg-red-700"></div>}
+                    {showLine && <div className={clsx('h-[1px] w-full rounded-full', bgColor)}></div>}
                 </div>
-                <div className="flex w-16 justify-center">{tokenAmount}</div>
+                <div className="flex w-16 justify-center">{tokenAmountString}</div>
                 <div className={clsx('flex grow items-center justify-center', linePadding)}>
-                    {showLine && <div className="h-[1px] w-full rounded-full bg-red-700"></div>}
+                    {showLine && <div className={clsx('h-[1px] w-full rounded-full', bgColor)}></div>}
                 </div>
-                <div className="flex w-12 justify-end">{adaAmount}</div>
+                <div className="flex w-12 justify-end">{adaAmountString}</div>
             </div>
         </>
     );

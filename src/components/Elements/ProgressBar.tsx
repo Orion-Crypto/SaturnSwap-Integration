@@ -1,15 +1,25 @@
+import clsx from 'clsx';
+
 type ProgressBarProps = {
-    bgcolor: string;
+    bgColor: string;
+    progressColor: string;
     countdown: number;
     maxCountdown: number;
 };
-export const ProgressBar = ({ bgcolor, countdown, maxCountdown }: ProgressBarProps) => {
+export const ProgressBar = ({ bgColor, progressColor, countdown, maxCountdown }: ProgressBarProps) => {
+    let percentage = (countdown / maxCountdown) * 100;
+    if (percentage < 0) {
+        percentage = 0;
+    }
+    if (percentage > 100) {
+        percentage = 100;
+    }
     const fillerStyles = {
-        width: `${(countdown / maxCountdown) * 100}%`,
+        width: `${percentage}%`,
     };
     return (
-        <div className="h-full w-full rounded-lg bg-white">
-            <div style={fillerStyles} className={`h-full rounded-lg ${bgcolor}`} />
+        <div className={clsx('h-full w-full rounded-lg', bgColor)}>
+            <div style={fillerStyles} className={`h-full rounded-lg ${progressColor}`} />
         </div>
     );
 };

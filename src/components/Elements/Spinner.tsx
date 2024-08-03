@@ -5,16 +5,25 @@ const colorMapping = {
     yellow: 'text-yellow-500',
     green: 'text-green-500',
     blue: 'text-blue-500',
+    sky: 'text-sky-500',
     red: 'text-red-500',
     orange: 'text-orange-500',
     black: 'text-black',
 };
 
-export const Spinner = ({ color = 'white' }: { color?: keyof typeof colorMapping }) => {
+export const Spinner = ({
+    color = 'white',
+    width = 'w-5',
+    height = 'h-5',
+}: {
+    color?: keyof typeof colorMapping;
+    width?: string;
+    height?: string;
+}) => {
     const textColor = colorMapping[color];
     return (
         <div>
-            <svg className={clsx('h-5 w-5 animate-spin', textColor)} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <svg className={clsx('animate-spin', width, height, textColor)} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                 <path
                     className="opacity-75"

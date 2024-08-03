@@ -44,7 +44,7 @@ export const Navbar = ({ transparent = false }) => {
                 <div className="hidden w-full items-center gap-2 text-base font-light lg:flex">
                     <NavbarLink onClick={closeDropdown} page={'/swap'} isPage={isSwapPage} text={'Swap'} />
                     <NavbarLink onClick={closeDropdown} page={'/aggregate'} isPage={isAggregatePage} text={'Aggregate'} />
-                    <NavbarLink onClick={closeDropdown} page={'/bots'} isPage={isBotsPage} text={'Bots'} />
+                    {/* <NavbarLink onClick={closeDropdown} page={'/bots'} isPage={isBotsPage} text={'Bots'} /> */}
                 </div>
                 <div className="grow"></div>
                 <div className="hidden w-60 lg:flex"></div>

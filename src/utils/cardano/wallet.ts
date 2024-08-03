@@ -1,13 +1,16 @@
-import { getConnectedWallet, setConnectedWallet } from '@/hooks/Cardano/wallet.hooks';
+import { WALLET_ADDRESS_KEY, getConnectedWallet, setConnectedWallet } from '@/hooks/Cardano/wallet.hooks';
 import { setNotification } from '@/hooks/Component/notification.hook';
+import { queryClient } from '@/hooks/default';
 import { Wallet } from '@/types/Classes/wallet';
 import { CardanoNetwork } from '@/types/Enums/Blockchain/Network';
 import { CardanoWalletType } from '@/types/Enums/Blockchain/Wallets';
 import { NotificationType } from '@/types/Enums/NotificationType';
-import { Lucid } from 'lucid-cardano';
+import { convertAdaToLovelaces } from '@/utils/cardano/lovelaces';
+import { Lucid, WalletApi } from 'lucid-cardano';
 
 class CardanoWallet {
     static lucid: Lucid | undefined;
+    static walletAPI: WalletApi | undefined;
 
     //---------------------------------------------------------------------------//
     // Wallet functions
@@ -64,6 +67,9 @@ class CardanoWallet {
                 });
                 return false;
             }
+
+            CardanoWallet.setOnAccountChange();
+            CardanoWallet.setOnNetworkChange();
             return true;
         } catch (error) {
             console.error(error);
@@ -76,7 +82,7 @@ class CardanoWallet {
         if (!cardano) return false;
 
         this.lucid = undefined;
-        //removeJWTToken();
+        this.walletAPI = undefined;
         setConnectedWallet(null);
     }
 
@@ -110,7 +116,7 @@ class CardanoWallet {
         if (isEnabled) {
             await this.setWallet(cardano, connectedWalletData?.walletType);
         } else {
-            this.lucid = undefined;
+            this.disconnect();
             return false;
         }
 
@@ -119,6 +125,8 @@ class CardanoWallet {
             return false;
         }
 
+        CardanoWallet.setOnAccountChange();
+        CardanoWallet.setOnNetworkChange();
         return true;
     }
 
@@ -139,6 +147,8 @@ class CardanoWallet {
 
         this.lucid = await Lucid.new(undefined, network);
         this.lucid.selectWallet(api);
+
+        this.walletAPI = api;
         const address = await this.lucid?.wallet.address();
         setConnectedWallet({ walletType: wallet, address } as Wallet);
         return true;
@@ -146,9 +156,48 @@ class CardanoWallet {
     //---------------------------------------------------------------------------//
 
     //---------------------------------------------------------------------------//
+    // Event functions
+    //---------------------------------------------------------------------------//
+    static async setOnAccountChange() {
+        this.walletAPI?.experimental.on('accountChange', () => {
+            this.onAccountChange();
+        });
+    }
+
+    static async setOnNetworkChange() {
+        this.walletAPI?.experimental.on('networkChange', () => {
+            this.onNetworkChange();
+        });
+    }
+
+    static async onAccountChange() {
+        const newAddress = await this.lucid?.wallet.address();
+
+        const wallet: any = getConnectedWallet();
+        const oldAddress = wallet?.address;
+
+        const walletType = wallet?.walletType;
+        this.setWallet(window.cardano, walletType);
+
+        queryClient.invalidateQueries({ queryKey: WALLET_ADDRESS_KEY });
+    }
+
+    static async onNetworkChange() {
+        this.disconnect();
+    }
+    //---------------------------------------------------------------------------//
+
+    //---------------------------------------------------------------------------//
     // Balance functions
     //---------------------------------------------------------------------------//
-    static async getBalance(asset: string | null = null, decimals = 6) {
+    static async getAddress() {
+        if (!this.lucid) return null;
+
+        const address = await this.lucid?.wallet.address();
+        return address;
+    }
+
+    static async getBalance(asset: string | null = null, decimals = 6, price: any = null) {
         const isConnected = await this.isConnected();
         if (!this.lucid || !isConnected) return null;
 
@@ -187,9 +236,24 @@ class CardanoWallet {
             balance += Number(utxoBalance);
         }
 
+        let showBalance = 0;
+        let spendBalance = 0;
         if (asset) {
             const power = Math.pow(10, decimals);
-            balance = Math.floor(balance / power);
+            showBalance = Math.floor(balance / power);
+
+            if (price) {
+                // Subtract 5 ada from spendable balance
+                const adaDecimals = 6;
+                const normalizedPrice = (price * Math.pow(10, adaDecimals)) / Math.pow(10, decimals);
+
+                const spendAmountReduction = convertAdaToLovelaces(5) / normalizedPrice;
+                spendBalance = Math.floor(showBalance - spendAmountReduction);
+                if (spendBalance < 0) spendBalance = 0;
+            } else {
+                // Show 2% of the balance for the user to see
+                spendBalance = Math.floor(balance * 0.98);
+            }
         } else {
             const power = Math.pow(10, decimals);
 
@@ -200,10 +264,12 @@ class CardanoWallet {
 
             balance -= balanceAdjustment * maxAdjustmentAmount;
             balance = Math.floor(balance / power);
+            showBalance = balance;
+            spendBalance = balance;
         }
 
         if (balance < 0) balance = 0;
-        return balance;
+        return { showBalance: showBalance, spendBalance: spendBalance };
     }
 
     static async getAllAssetBalances() {

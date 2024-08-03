@@ -14,17 +14,3 @@ export const flattenPoolUtxosPages = (poolUtxosPages: any) => {
 
     return nodeList;
 };
-
-export const handleKeyDown = (event: KeyboardEvent, inputValue?: string) => {
-    // List of key codes for 'e', 'E', '+', '-'
-    const forbiddenKeys = ['e', 'E', '+', '-'];
-
-    if (forbiddenKeys.includes(event.key)) {
-        event.preventDefault(); // Prevent these keys from being processed
-    } else if ((event.key === '.' || event.key === ',') && inputValue) {
-        // Check if the input already contains a decimal point or comma
-        if (inputValue.includes('.') || inputValue.includes(',')) {
-            event.preventDefault(); // Prevent another decimal point or comma if one already exists
-        }
-    }
-};

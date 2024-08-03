@@ -11,9 +11,6 @@ export const ACTIVITY_FEED_POOL_UTXO_KEY = 'activity_feed';
 //---------------------------------------------------------------------------------------------------//
 // Pool Hooks and Functions
 //---------------------------------------------------------------------------------------------------//
-export const useGetPoolUtxo = (id: string, parameters: any = {}) =>
-    useQuery({ queryKey: [BASE_POOL_UTXO_KEY, 'detail', id], queryFn: async () => await queryPoolUtxo(id), ...parameters });
-
 export const useGetPoolUtxos = (graphQLParameters: GraphQLParameters = {}, enabled = true) =>
     useInfiniteQuery({
         queryKey: [BASE_POOL_UTXO_KEY, 'infinite', graphQLParameters.where],
