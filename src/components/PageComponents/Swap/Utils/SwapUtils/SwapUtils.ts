@@ -1,9 +1,6 @@
 import { UpdateLimitInputs } from '@/components/PageComponents/Swap/Utils/SwapUtils/LimitSwapUtils';
 import { UpdateMarketInputs } from '@/components/PageComponents/Swap/Utils/SwapUtils/MarketSwapUtils';
-import { getSwap, setSwap } from '@/hooks/Component/swap.hook';
-import { OrderType } from '@/types/Enums/OrderType';
 import { SwapType } from '@/types/Enums/SwapType';
-import { cleanStringNumber, convertStringToNumber, formatCommaValue } from '@/utils/number';
 
 export interface SwapTokens {
     tokenAmountSell: string;

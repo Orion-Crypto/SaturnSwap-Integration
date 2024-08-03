@@ -10,6 +10,10 @@ export const getNikePoolName = () => {
 };
 
 export const getNikePoolId = () => {
+    if (process.env.NEXT_PUBLIC_ENVIRONMENT === 'local') {
+        return '0605daca-655a-4470-9dd8-a93dd0a39239';
+    }
+
     return 'd0e37969-57ab-45fc-9c7d-547fa22b19c8';
 };
 
