@@ -5,7 +5,7 @@ import { Spinner } from '@/components/Elements/Spinner';
 import { SubNavbar } from '@/components/Layouts/Navbar/SubNavbar';
 import { OrderContainer } from '@/components/PageComponents/Order/OrderContainer/OrderContainer';
 import { Swap } from '@/components/PageComponents/Swap/Swap';
-import { AdvancedOrder, SimpleOrder } from '@/components/PageComponents/Swap/Utils/AggregatorUtils';
+import { AdvancedOrder, ReserveAdvancedOrder, SimpleOrder } from '@/components/PageComponents/Swap/Utils/AggregatorUtils';
 import { MarketOrder } from '@/components/PageComponents/Swap/Utils/TransactionUtils';
 import { useGetConnectedWallet } from '@/hooks/Cardano/wallet.hooks';
 import { useGetShowBackgroundImage } from '@/hooks/Component/background-image.hook';
@@ -20,6 +20,7 @@ const SwapPage = () => {
     const [toggleAnimation, setToggleAnimation] = useState(false);
     const [isLoadingSimple, setIsLoadingSimple] = useState(false);
     const [isLoadingAdvanced, setIsLoadingAdvanced] = useState(false);
+    const [isLoadingReserveAdvanced, setIsLoadingReserveAdvanced] = useState(false);
 
     const { data: connectedWallet }: any = useGetConnectedWallet();
     const { data: showBackgroundImage }: any = useGetShowBackgroundImage();
@@ -86,6 +87,23 @@ const SwapPage = () => {
                             {isLoadingAdvanced ? <Spinner /> : `Buy 10 ₳ Of Nike`}
                         </div>
                     </div>
+                    <div className="flex w-full flex-col items-center gap-4">
+                        <div className="flex w-full items-center justify-center text-3xl font-bold text-sky-300">
+                            Reserve Advanced Tx Builder
+                        </div>
+                        <div
+                            onClick={async () => {
+                                if (isLoadingReserveAdvanced) return;
+
+                                setIsLoadingReserveAdvanced(true);
+                                await ExecuteReserveAdvancedOrder();
+                                setIsLoadingReserveAdvanced(false);
+                            }}
+                            className="z-50 flex h-16 w-64 cursor-pointer select-none items-center justify-center rounded-xl bg-blue-500 p-4 text-xl font-bold text-white transition-all duration-300 hover:bg-blue-600"
+                        >
+                            {isLoadingReserveAdvanced ? <Spinner /> : `Buy 10 ₳ Of Nike`}
+                        </div>
+                    </div>
                 </div>
             </div>
         </>
@@ -108,6 +126,15 @@ const ExecuteAdvancedOrder = async () => {
 
     let marketOrderType = 3;
     await AdvancedOrder(poolId, tokenBuyAmount, tokenSellAmount, null, marketOrderType);
+};
+
+const ExecuteReserveAdvancedOrder = async () => {
+    const poolId = getNikePoolId();
+    const tokenBuyAmount = 10;
+    const tokenSellAmount = 10 * 0.2;
+
+    let marketOrderType = 3;
+    await ReserveAdvancedOrder(poolId, tokenBuyAmount, tokenSellAmount, null, marketOrderType);
 };
 
 export default SwapPage;
