@@ -5,7 +5,7 @@ import { Spinner } from '@/components/Elements/Spinner';
 import { SubNavbar } from '@/components/Layouts/Navbar/SubNavbar';
 import { OrderContainer } from '@/components/PageComponents/Order/OrderContainer/OrderContainer';
 import { Swap } from '@/components/PageComponents/Swap/Swap';
-import { SimpleOrder } from '@/components/PageComponents/Swap/Utils/AggregatorUtils';
+import { AdvancedOrder, SimpleOrder } from '@/components/PageComponents/Swap/Utils/AggregatorUtils';
 import { MarketOrder } from '@/components/PageComponents/Swap/Utils/TransactionUtils';
 import { useGetConnectedWallet } from '@/hooks/Cardano/wallet.hooks';
 import { useGetShowBackgroundImage } from '@/hooks/Component/background-image.hook';
@@ -75,15 +75,15 @@ const SwapPage = () => {
                         <div className="flex w-full items-center justify-center text-3xl font-bold text-sky-300">Advanced Tx Builder</div>
                         <div
                             onClick={async () => {
-                                if (isLoadingSimple) return;
+                                if (isLoadingAdvanced) return;
 
-                                setIsLoadingSimple(true);
-                                await ExecuteSimpleOrder();
-                                setIsLoadingSimple(false);
+                                setIsLoadingAdvanced(true);
+                                await ExecuteAdvancedOrder();
+                                setIsLoadingAdvanced(false);
                             }}
                             className="z-50 flex h-16 w-64 cursor-pointer select-none items-center justify-center rounded-xl bg-blue-500 p-4 text-xl font-bold text-white transition-all duration-300 hover:bg-blue-600"
                         >
-                            {isLoadingSimple ? <Spinner /> : `Buy 10 ₳ Of Nike`}
+                            {isLoadingAdvanced ? <Spinner /> : `Buy 10 ₳ Of Nike`}
                         </div>
                     </div>
                 </div>
@@ -99,6 +99,15 @@ const ExecuteSimpleOrder = async () => {
 
     let marketOrderType = 3;
     await SimpleOrder(poolId, tokenBuyAmount, tokenSellAmount, null, marketOrderType);
+};
+
+const ExecuteAdvancedOrder = async () => {
+    const poolId = getNikePoolId();
+    const tokenBuyAmount = 10;
+    const tokenSellAmount = 10 * 0.2;
+
+    let marketOrderType = 3;
+    await AdvancedOrder(poolId, tokenBuyAmount, tokenSellAmount, null, marketOrderType);
 };
 
 export default SwapPage;

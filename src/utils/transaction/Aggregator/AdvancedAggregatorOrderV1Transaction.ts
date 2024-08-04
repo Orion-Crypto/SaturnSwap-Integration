@@ -1,15 +1,18 @@
-import { mutateCreateOrderTransaction, mutateSubmitOrderTransaction } from '@/api/GraphQL/Transaction/OrderTransaction/Mutation';
+import { CreateAdvancedTransactionInputDTO } from '@/api/REST/Transaction/AdvancedAggregator/Data/CreateAdvancedTransactionInputDTO';
+import { SignAdvancedTransactionInputDTO } from '@/api/REST/Transaction/AdvancedAggregator/Data/SignAdvancedTransactionInputDTO';
+import { SignAdvancedTransactionPayloadDTO } from '@/api/REST/Transaction/AdvancedAggregator/Data/SignAdvancedTransactionPayloadDTO';
+import { SignAdvancedTransactionAPI } from '@/api/REST/Transaction/AdvancedAggregator/SignTransaction';
+import { CreateSimpleTransactionAPI } from '@/api/REST/Transaction/SimpleAggregator/CreateTransaction';
+import { CreateSimpleTransactionInputDTO } from '@/api/REST/Transaction/SimpleAggregator/Data/CreateSimpleTransactionInputDTO';
+import { CreateSimpleTransactionPayloadDTO } from '@/api/REST/Transaction/SimpleAggregator/Data/CreateSimpleTransactionPayloadDTO';
 import { setInfoTab } from '@/hooks/Component/info-tab.hook';
 import { setSignatureCount } from '@/hooks/Models/transaction.hook';
 import { ConnectWalletError, InvalidInputError, InvalidTransactionSignatureError } from '@/types/Classes/SaturnSwapError';
 import { InfoTabType } from '@/types/Enums/InfoTabType';
-import { CreateOrderTransactionInput } from '@/types/Transactions/Order/CreateOrderTransactionInput';
-import { CreateOrderTransactionPayload } from '@/types/Transactions/Order/CreateOrderTransactionPayload';
-import { SubmitOrderTransactionInput } from '@/types/Transactions/Order/SubmitOrderTransactionInput';
-import { SubmitOrderTransactionPayload } from '@/types/Transactions/Order/SubmitOrderTransactionPayload';
 import { SuccessTransaction } from '@/types/Transactions/SuccessTransaction';
 import { TransactionResult } from '@/types/Transactions/TransactionResult';
 import CardanoWallet from '@/utils/cardano/wallet';
+import { CreateSimpleTransactionInput, IsValidSimpleInput } from '@/utils/transaction/Aggregator/SimpleAggregatorOrderV1Transaction';
 import { SignTransactionKeepingWitnessOrder } from '@/utils/transaction/GeneralTransactionUtils';
 
 export const AdvancedComposableOrderV1Transaction = async ({
@@ -21,19 +24,19 @@ export const AdvancedComposableOrderV1Transaction = async ({
         const paymentAddress = await CardanoWallet.lucid?.wallet.address();
         if (!paymentAddress) return { error: ConnectWalletError } as TransactionResult;
 
-        const createInput: CreateOrderTransactionInput = CreateTransactionInput(
+        const createInput: CreateSimpleTransactionInputDTO = CreateSimpleTransactionInput(
             paymentAddress,
             limitOrderComponents,
             marketOrderComponents,
             cancelComponents
         );
-        if (!IsValidInput(createInput)) {
+        if (!IsValidSimpleInput(createInput)) {
             return {
                 error: InvalidInputError,
             } as TransactionResult;
         }
 
-        const createTransaction: CreateOrderTransactionPayload = await mutateCreateOrderTransaction(createInput);
+        const createTransaction: CreateSimpleTransactionPayloadDTO = await CreateSimpleTransactionAPI(createInput);
         const successTransactions = createTransaction?.successTransactions;
         if (!successTransactions || successTransactions.length <= 0) {
             return { error: createTransaction?.error } as TransactionResult;
@@ -73,19 +76,25 @@ export const AdvancedComposableOrderV1Transaction = async ({
             submitSuccesses.push(submitSuccess);
         }
 
-        // Test Sign Aggregator Transaction - Only use to test aggregators, don't use otherwise
-        // const order = await SignOrderTransactionAPI(paymentAddress, submitSuccesses);
-        // console.info(order);
-        // return {} as any;
+        const hexTransactions: any = [];
+        for (const success of submitSuccesses) {
+            hexTransactions.push(success.hexTransaction);
+        }
 
-        // Test Submit Order Transaction
-        const submitInput: SubmitOrderTransactionInput = {
+        // Test Sign (This submits too for instant liquidity system)
+        const submitInput: SignAdvancedTransactionInputDTO = {
             paymentAddress: paymentAddress,
-            successTransactions: submitSuccesses,
+            hexTransactions: hexTransactions,
         };
-        const submitTransaction: SubmitOrderTransactionPayload = await mutateSubmitOrderTransaction(submitInput);
+        const submitTransaction: SignAdvancedTransactionPayloadDTO = await SignAdvancedTransactionAPI(submitInput);
 
-        const transactionIds: any = submitTransaction?.transactionIds;
+        const transactionIds: any = [];
+        if (submitTransaction?.successTransactions) {
+            for (const transaction of submitTransaction.successTransactions) {
+                transactionIds.push(transaction.transactionId);
+            }
+        }
+
         if (!transactionIds || transactionIds.length <= 0 || !!submitTransaction.error) {
             setSignatureCount(null);
             return { error: submitTransaction?.error } as TransactionResult;
@@ -100,7 +109,7 @@ export const AdvancedComposableOrderV1Transaction = async ({
     }
 };
 
-const IsValidInput = (createInput: CreateOrderTransactionInput) => {
+const IsValidAdvancedInput = (createInput: CreateAdvancedTransactionInputDTO) => {
     const { paymentAddress, limitOrderComponents, marketOrderComponents, cancelComponents } = createInput;
     if (!paymentAddress) return false;
 
@@ -112,13 +121,13 @@ const IsValidInput = (createInput: CreateOrderTransactionInput) => {
     return !(allNull || allEmpty);
 };
 
-export const CreateTransactionInput = (
+export const CreateAdvancedTransactionInput = (
     paymentAddress: string,
     limitOrderComponents: any[],
     marketOrderComponents: any[],
     cancelComponents: any[]
 ) => {
-    const createInput: CreateOrderTransactionInput = {
+    const createInput: CreateAdvancedTransactionInputDTO = {
         paymentAddress: paymentAddress,
         limitOrderComponents: limitOrderComponents,
         marketOrderComponents: marketOrderComponents,

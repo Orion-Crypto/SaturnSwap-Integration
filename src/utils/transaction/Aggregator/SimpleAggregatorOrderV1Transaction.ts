@@ -1,10 +1,10 @@
 import { mutateCreateOrderTransaction, mutateSubmitOrderTransaction } from '@/api/GraphQL/Transaction/OrderTransaction/Mutation';
-import { CreateSimpleTransactionAPI } from '@/api/REST/Transaction/SimpleAggregator/CreateTransaction/CreateTransaction';
-import { SubmitSimpleTransactionAPI } from '@/api/REST/Transaction/SimpleAggregator/CreateTransaction/SubmitTransaction';
+import { CreateSimpleTransactionAPI } from '@/api/REST/Transaction/SimpleAggregator/CreateTransaction';
 import { CreateSimpleTransactionInputDTO } from '@/api/REST/Transaction/SimpleAggregator/Data/CreateSimpleTransactionInputDTO';
 import { CreateSimpleTransactionPayloadDTO } from '@/api/REST/Transaction/SimpleAggregator/Data/CreateSimpleTransactionPayloadDTO';
 import { SubmitSimpleTransactionInputDTO } from '@/api/REST/Transaction/SimpleAggregator/Data/SubmitSimpleTransactionInput';
 import { SubmitSimpleTransactionPayloadDTO } from '@/api/REST/Transaction/SimpleAggregator/Data/SubmitSimpleTransactionPayload';
+import { SubmitSimpleTransactionAPI } from '@/api/REST/Transaction/SimpleAggregator/SubmitTransaction';
 import { setInfoTab } from '@/hooks/Component/info-tab.hook';
 import { setSignatureCount } from '@/hooks/Models/transaction.hook';
 import { ConnectWalletError, InvalidInputError, InvalidTransactionSignatureError } from '@/types/Classes/SaturnSwapError';
@@ -23,13 +23,13 @@ export const SimpleComposableOrderV1Transaction = async ({
         const paymentAddress = await CardanoWallet.lucid?.wallet.address();
         if (!paymentAddress) return { error: ConnectWalletError } as TransactionResult;
 
-        const createInput: CreateSimpleTransactionInputDTO = CreateTransactionInput(
+        const createInput: CreateSimpleTransactionInputDTO = CreateSimpleTransactionInput(
             paymentAddress,
             limitOrderComponents,
             marketOrderComponents,
             cancelComponents
         );
-        if (!IsValidInput(createInput)) {
+        if (!IsValidSimpleInput(createInput)) {
             return {
                 error: InvalidInputError,
             } as TransactionResult;
@@ -102,7 +102,7 @@ export const SimpleComposableOrderV1Transaction = async ({
     }
 };
 
-const IsValidInput = (createInput: CreateSimpleTransactionInputDTO) => {
+export const IsValidSimpleInput = (createInput: CreateSimpleTransactionInputDTO) => {
     const { paymentAddress, limitOrderComponents, marketOrderComponents, cancelComponents } = createInput;
     if (!paymentAddress) return false;
 
@@ -114,7 +114,7 @@ const IsValidInput = (createInput: CreateSimpleTransactionInputDTO) => {
     return !(allNull || allEmpty);
 };
 
-export const CreateTransactionInput = (
+export const CreateSimpleTransactionInput = (
     paymentAddress: string,
     limitOrderComponents: any[],
     marketOrderComponents: any[],
