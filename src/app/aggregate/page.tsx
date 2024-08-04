@@ -58,50 +58,92 @@ const SwapPage = () => {
                 </>
                 <div className="flex h-full w-full flex-col items-center justify-center gap-24">
                     <div className="flex w-full flex-col items-center gap-4">
-                        <div className="flex w-full items-center justify-center text-3xl font-bold text-sky-300">Simple Tx Builder</div>
-                        <div
-                            onClick={async () => {
-                                if (isLoadingSimple) return;
+                        <div className="flex w-full items-center justify-center text-3xl font-bold text-sky-300">Simple Tx Builders</div>
+                        <div className="flex w-full justify-center gap-12">
+                            <div
+                                onClick={async () => {
+                                    if (isLoadingSimple) return;
 
-                                setIsLoadingSimple(true);
-                                await ExecuteSimpleOrder();
-                                setIsLoadingSimple(false);
-                            }}
-                            className="z-50 flex h-16 w-64 cursor-pointer select-none items-center justify-center rounded-xl bg-blue-500 p-4 text-xl font-bold text-white transition-all duration-300 hover:bg-blue-600"
-                        >
-                            {isLoadingSimple ? <Spinner /> : `Buy 10 ₳ Of Nike`}
+                                    setIsLoadingSimple(true);
+                                    await ExecuteSimpleOrder(true);
+                                    setIsLoadingSimple(false);
+                                }}
+                                className="z-50 flex h-16 w-64 cursor-pointer select-none items-center justify-center rounded-xl bg-blue-500 p-4 text-xl font-bold text-white transition-all duration-300 hover:bg-blue-600"
+                            >
+                                {isLoadingSimple ? <Spinner /> : `Buy 10 ₳ Of Nike`}
+                            </div>
+                            <div
+                                onClick={async () => {
+                                    if (isLoadingSimple) return;
+
+                                    setIsLoadingSimple(true);
+                                    await ExecuteSimpleOrder(false);
+                                    setIsLoadingSimple(false);
+                                }}
+                                className="z-50 flex h-16 w-64 cursor-pointer select-none items-center justify-center rounded-xl bg-blue-500 p-4 text-xl font-bold text-white transition-all duration-300 hover:bg-blue-600"
+                            >
+                                {isLoadingSimple ? <Spinner /> : `Sell 10 ₳ Of Nike`}
+                            </div>
                         </div>
                     </div>
                     <div className="flex w-full flex-col items-center gap-4">
                         <div className="flex w-full items-center justify-center text-3xl font-bold text-sky-300">Advanced Tx Builder</div>
-                        <div
-                            onClick={async () => {
-                                if (isLoadingAdvanced) return;
+                        <div className="flex w-full justify-center gap-12">
+                            <div
+                                onClick={async () => {
+                                    if (isLoadingAdvanced) return;
 
-                                setIsLoadingAdvanced(true);
-                                await ExecuteAdvancedOrder();
-                                setIsLoadingAdvanced(false);
-                            }}
-                            className="z-50 flex h-16 w-64 cursor-pointer select-none items-center justify-center rounded-xl bg-blue-500 p-4 text-xl font-bold text-white transition-all duration-300 hover:bg-blue-600"
-                        >
-                            {isLoadingAdvanced ? <Spinner /> : `Buy 10 ₳ Of Nike`}
+                                    setIsLoadingAdvanced(true);
+                                    await ExecuteAdvancedOrder(true);
+                                    setIsLoadingAdvanced(false);
+                                }}
+                                className="z-50 flex h-16 w-64 cursor-pointer select-none items-center justify-center rounded-xl bg-blue-500 p-4 text-xl font-bold text-white transition-all duration-300 hover:bg-blue-600"
+                            >
+                                {isLoadingAdvanced ? <Spinner /> : `Buy 10 ₳ Of Nike`}
+                            </div>
+                            <div
+                                onClick={async () => {
+                                    if (isLoadingAdvanced) return;
+
+                                    setIsLoadingAdvanced(true);
+                                    await ExecuteAdvancedOrder(false);
+                                    setIsLoadingAdvanced(false);
+                                }}
+                                className="z-50 flex h-16 w-64 cursor-pointer select-none items-center justify-center rounded-xl bg-blue-500 p-4 text-xl font-bold text-white transition-all duration-300 hover:bg-blue-600"
+                            >
+                                {isLoadingAdvanced ? <Spinner /> : `Sell 10 ₳ Of Nike`}
+                            </div>
                         </div>
                     </div>
                     <div className="flex w-full flex-col items-center gap-4">
                         <div className="flex w-full items-center justify-center text-3xl font-bold text-sky-300">
                             Reserve Advanced Tx Builder
                         </div>
-                        <div
-                            onClick={async () => {
-                                if (isLoadingReserveAdvanced) return;
+                        <div className="flex w-full justify-center gap-12">
+                            <div
+                                onClick={async () => {
+                                    if (isLoadingReserveAdvanced) return;
 
-                                setIsLoadingReserveAdvanced(true);
-                                await ExecuteReserveAdvancedOrder();
-                                setIsLoadingReserveAdvanced(false);
-                            }}
-                            className="z-50 flex h-16 w-64 cursor-pointer select-none items-center justify-center rounded-xl bg-blue-500 p-4 text-xl font-bold text-white transition-all duration-300 hover:bg-blue-600"
-                        >
-                            {isLoadingReserveAdvanced ? <Spinner /> : `Buy 10 ₳ Of Nike`}
+                                    setIsLoadingReserveAdvanced(true);
+                                    await ExecuteReserveAdvancedOrder(true);
+                                    setIsLoadingReserveAdvanced(false);
+                                }}
+                                className="z-50 flex h-16 w-64 cursor-pointer select-none items-center justify-center rounded-xl bg-blue-500 p-4 text-xl font-bold text-white transition-all duration-300 hover:bg-blue-600"
+                            >
+                                {isLoadingReserveAdvanced ? <Spinner /> : `Buy 10 ₳ Of Nike`}
+                            </div>
+                            <div
+                                onClick={async () => {
+                                    if (isLoadingReserveAdvanced) return;
+
+                                    setIsLoadingReserveAdvanced(true);
+                                    await ExecuteReserveAdvancedOrder(false);
+                                    setIsLoadingReserveAdvanced(false);
+                                }}
+                                className="z-50 flex h-16 w-64 cursor-pointer select-none items-center justify-center rounded-xl bg-blue-500 p-4 text-xl font-bold text-white transition-all duration-300 hover:bg-blue-600"
+                            >
+                                {isLoadingReserveAdvanced ? <Spinner /> : `Sell 10 ₳ Of Nike`}
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -110,30 +152,45 @@ const SwapPage = () => {
     );
 };
 
-const ExecuteSimpleOrder = async () => {
+const ExecuteSimpleOrder = async (isBuy: boolean = true) => {
     const poolId = getNikePoolId();
-    const tokenBuyAmount = 10;
-    const tokenSellAmount = 10 * 0.2;
-
+    let tokenBuyAmount = 10;
+    let tokenSellAmount = 10 * 0.2;
     let marketOrderType = 3;
+    if (!isBuy) {
+        tokenBuyAmount = 10 / 0.2;
+        tokenSellAmount = 10;
+        marketOrderType = 4;
+    }
+
     await SimpleOrder(poolId, tokenBuyAmount, tokenSellAmount, null, marketOrderType);
 };
 
-const ExecuteAdvancedOrder = async () => {
+const ExecuteAdvancedOrder = async (isBuy: boolean = true) => {
     const poolId = getNikePoolId();
-    const tokenBuyAmount = 10;
-    const tokenSellAmount = 10 * 0.2;
-
+    let tokenBuyAmount = 10;
+    let tokenSellAmount = 10 * 0.2;
     let marketOrderType = 3;
+    if (!isBuy) {
+        tokenBuyAmount = 10 / 0.2;
+        tokenSellAmount = 10;
+        marketOrderType = 4;
+    }
+
     await AdvancedOrder(poolId, tokenBuyAmount, tokenSellAmount, null, marketOrderType);
 };
 
-const ExecuteReserveAdvancedOrder = async () => {
+const ExecuteReserveAdvancedOrder = async (isBuy: boolean = true) => {
     const poolId = getNikePoolId();
-    const tokenBuyAmount = 10;
-    const tokenSellAmount = 10 * 0.2;
-
+    let tokenBuyAmount = 10;
+    let tokenSellAmount = 10 * 0.2;
     let marketOrderType = 3;
+    if (!isBuy) {
+        tokenBuyAmount = 10 / 0.2;
+        tokenSellAmount = 10;
+        marketOrderType = 4;
+    }
+
     await ReserveAdvancedOrder(poolId, tokenBuyAmount, tokenSellAmount, null, marketOrderType);
 };
 
